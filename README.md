@@ -1,5 +1,3 @@
-**Status:** Archive (code is provided as-is, no updates expected)
-
 # gym-boat
 
 The [Boat environment](https://github.com/teriterance/BoatMapSimulation) is a multiagent
