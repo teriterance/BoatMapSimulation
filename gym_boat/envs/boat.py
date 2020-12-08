@@ -18,6 +18,8 @@ class Boat:
         self.speed = speed
         self.cog = cog
         self.weight = boat_weight
+        self.earth_radius = 6378 # en Km
+        self.delta_cog = 0
     
     def step(self, delta_t, acceleration, cog_orientation):
         """
@@ -31,3 +33,37 @@ class Boat:
         self.step(0.1, -0.1, 'B')
         """
         self.speed = self.speed + delta_t * acceleration # on cosidere une approximation sur le temps
+        if cog_orientation ==  'B': 
+            self.cog = self.cog + 360 / self.weight #evolution inversement proportionel au poids 
+        elif cog_orientation == 'T':
+            self.cog = self.cog + 360 / self.weight #evolution inversement proportionel au poids
+        else:
+            #cas ou il n'y a auccune direction on va tout droit
+            pass
+
+        ## Correction des billets d'angle    
+        if self.cog >= 360.0:
+            self.cog = self.cog - 360
+        if self.cog <= 0.0:
+            self.cog = self.cog + 360
+        
+        ## Evolution de la latitude et de la longitude
+        d = self.speed * delta_t #distance en cartesien
+        bearing = np.deg2rad(self.cog)
+        self.lat = np.deg2rad(self.lat)
+        self.long = np.deg2rad(self.long)
+
+        lat2 = np.arcsin(np.sin(self.lat) * np.cos(d) + np.cos(self.lat) * np.sin(d) * np.cos(bearing))
+        dlon = np.atan2(np.sin(bearing) * np.sin(d) * np.cos(self.lat), np.cos(d) - np.sin(self.lat) * np.sin(lat2))
+        self.lon2 = np.mod( self.long - dlon + np.pi, 2 * np.pi ) - np.pi
+        self.lat = lat2
+
+        self.lat = np.rad2deg(self.lat)
+        self.long = np.rad2deg(self.long)
+    
+    def getParameter(self):
+        """
+        Return state status of Boat
+        """
+        output  = [self.lat, self.long, self.speed, self.cog]
+        return output
