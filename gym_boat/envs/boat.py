@@ -67,3 +67,7 @@ class Boat:
         """
         output  = [self.lat, self.long, self.speed, self.cog]
         return output
+
+
+if __name__ == "__main__":
+    pass
