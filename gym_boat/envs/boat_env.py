@@ -49,8 +49,8 @@ class BoatEnv(gym.Env, utils.EzPickle):
         exit()
     #dim
     self.boat = Boat()
-    dim = 5 #dimenstion de l'espace de travail
-    self.action_space = spaces.Discrete(dim)
+    dim = 3 #dimenstion de l'espace de travail
+    self.action_space = spaces.Tuple(spaces.Discrete(1), spaces.Discrete(1), spaces.Discrete(1))
     self.observation_space = self.action_space
     self.ep_length = ep_length
     self.dim = dim
@@ -67,7 +67,7 @@ class BoatEnv(gym.Env, utils.EzPickle):
   def step(self, action):
     "step function"
     reward = self._get_reward(action)
-    self._choose_next_state()
+    self._choose_next_state(action)
     self.current_step += 1
     done = self.current_step >= self.ep_length
     return self.state, reward, done, {}
@@ -82,8 +82,7 @@ class BoatEnv(gym.Env, utils.EzPickle):
   def _get_reward(self):
     """ Reward is given for scoring a goal. """
     if self.status():
-      return self.current_step/self.ep_length # the reward is proportional to the
-      #duration  
+      return self.current_step/self.ep_length # the reward is proportional to the duration  
     else:
       return 0
 
